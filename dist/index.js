@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const http_1 = __importDefault(require("http"));
 const post_1 = require("./functions/post");
 const getUserId_1 = require("./functions/getUserId");
+const checkPutRequest_1 = require("./functions/checkPutRequest");
+const put_1 = require("./functions/put");
 // let testObj = {
 //   name: "string",
 //   age: 22,
@@ -14,20 +16,15 @@ const getUserId_1 = require("./functions/getUserId");
 TestCrud();
 function TestCrud() {
     const reqUrl = "/api/users";
-    const store = [];
-    const getAllUsers = () => {
-        return {
-            code: 200,
-            data: JSON.stringify(store)
-        };
-    };
-    const put = () => { };
+    let store = [];
     const del = () => { };
     http_1.default.createServer((request, response) => {
         var _a;
         if (request.url === reqUrl && request.method === "GET") {
-            response.statusCode = getAllUsers().code;
-            response.end(getAllUsers().data);
+            response.statusCode = 200;
+            response.end(JSON.stringify(store));
+            // response.statusCode = getAllUsers(store).code;
+            // response.end(getAllUsers(store).data);
         }
         if (request.method === "GET" && ((_a = request.url) === null || _a === void 0 ? void 0 : _a.startsWith("/api/users/"))) {
             let x = (0, getUserId_1.getUserId)(request.url, store);
@@ -41,6 +38,19 @@ function TestCrud() {
                 x = (0, post_1.post)(chunk, store);
                 response.statusCode = x.code;
                 response.end(JSON.stringify(x.user));
+            });
+        }
+        if (request.method === "PUT") {
+            let findUser = (0, checkPutRequest_1.checkPutRequest)(request.url, store);
+            if (typeof findUser.code === "number") {
+                response.statusCode = findUser.code;
+                response.end(JSON.stringify(findUser.data));
+            }
+            request.on("data", (chunk) => {
+                chunk = JSON.parse(chunk.toString());
+                let newStore = (0, put_1.put)(store, chunk, findUser);
+                store = newStore;
+                response.end(JSON.stringify(chunk));
             });
         }
         // response.end();

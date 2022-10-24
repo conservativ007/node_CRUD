@@ -4,7 +4,7 @@ exports.post = void 0;
 const uuid_1 = require("uuid");
 const checkPostRequest_1 = require("./checkPostRequest");
 const post = (user, store) => {
-    if ((0, checkPostRequest_1.checkPostRequest)(user)) {
+    if ((0, checkPostRequest_1.checkPostRequest)(user) === true) {
         let newUser = {
             "id": (0, uuid_1.v4)(),
             "name": user.name,

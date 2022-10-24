@@ -4,7 +4,7 @@ import { checkPostRequest } from "./checkPostRequest";
 
 export const post = (user: { name: string, age: number, hobbies: [string] }, store: any) => {
 
-  if (checkPostRequest(user)) {
+  if (checkPostRequest(user) === true) {
 
     let newUser = {
       "id": v4(),
