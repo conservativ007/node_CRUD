@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUserId = void 0;
-const getUserId = (user, store) => {
-    let lastSlah = user.lastIndexOf("/");
-    let userId = user.slice(lastSlah + 1);
+const getUserId = (url, store) => {
+    let lastSlah = url.lastIndexOf("/");
+    let userId = url.slice(lastSlah + 1);
     if (userId.length !== 36) {
         return {
             code: 400,

@@ -25,8 +25,6 @@ function TestCrud() {
     if (request.url === reqUrl && request.method === "GET") {
       response.statusCode = 200;
       response.end(JSON.stringify(store));
-      // response.statusCode = getAllUsers(store).code;
-      // response.end(getAllUsers(store).data);
     }
 
     if (request.method === "GET" && request.url?.startsWith("/api/users/")) {
@@ -65,6 +63,22 @@ function TestCrud() {
 
         response.end(JSON.stringify(chunk));
       });
+    }
+
+    if (request.method === "DELETE") {
+      let url: any = request.url;
+      let user: any = getUserId(url, store);
+
+      if (typeof user.data === "string") {
+        response.statusCode = user.data.code;
+        response.end(JSON.stringify(user.data));
+      }
+
+      let filteredStore = store.filter((i: any) => i.id !== user.data.id);
+      store = filteredStore;
+
+      response.statusCode = 204;
+      response.end();
     }
 
     // response.end();

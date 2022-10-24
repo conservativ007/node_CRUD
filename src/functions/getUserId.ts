@@ -1,6 +1,6 @@
-export const getUserId = (user: string, store: any) => {
-  let lastSlah = user.lastIndexOf("/");
-  let userId = user.slice(lastSlah + 1);
+export const getUserId = (url: string, store: any) => {
+  let lastSlah = url.lastIndexOf("/");
+  let userId = url.slice(lastSlah + 1);
 
   if (userId.length !== 36) {
     return {
