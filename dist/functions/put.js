@@ -10,8 +10,5 @@ function put(store, chunk, findUser) {
         return item;
     });
     return newStore;
-    console.log("newStore :", newStore);
-    store = newStore;
-    console.log("store :", store);
 }
 exports.put = put;

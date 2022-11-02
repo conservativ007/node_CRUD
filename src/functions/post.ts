@@ -1,8 +1,9 @@
 import { v4 } from "uuid";
 import { checkPostRequest } from "./checkPostRequest";
+import { Person } from "./types";
 
 
-export const post = (user: { name: string, age: number, hobbies: [string] }, store: any) => {
+export const post = (user: Person, store: Person[]) => {
 
   if (checkPostRequest(user) === true) {
 

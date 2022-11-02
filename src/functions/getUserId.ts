@@ -1,4 +1,6 @@
-export const getUserId = (url: string, store: any) => {
+import { Person, ServerAnswer } from "./types";
+
+export const getUserId = (url: string, store: Person[]): Person | ServerAnswer => {
   let lastSlah = url.lastIndexOf("/");
   let userId = url.slice(lastSlah + 1);
 
@@ -9,8 +11,8 @@ export const getUserId = (url: string, store: any) => {
     }
   }
 
-  let foundUser = false;
-  store.forEach((i: any) => {
+  let foundUser: Person | boolean = false;
+  store.forEach((i: Person) => {
     if (i.id === userId) {
       foundUser = i;
       return;

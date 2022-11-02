@@ -2,34 +2,39 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 const http_1 = __importDefault(require("http"));
+require("dotenv/config");
 const post_1 = require("./functions/post");
 const getUserId_1 = require("./functions/getUserId");
 const put_1 = require("./functions/put");
-const dotenv_1 = __importDefault(require("dotenv"));
-const PORT = (_a = dotenv_1.default.config().parsed) === null || _a === void 0 ? void 0 : _a.PORT;
-const reqUrl = "/api/users";
+const PORT = process.env.PORT || 3000;
+const reqUrlOne = "/api/users";
+const reqUrlTwo = "/api/users/";
 let store = [];
-http_1.default.createServer((request, response) => {
+const server = http_1.default.createServer((request, response) => {
     var _a;
-    if (request.url === reqUrl && request.method === "GET") {
+    if (request.url === reqUrlOne && request.method === "GET") {
         response.statusCode = 200;
         response.end(JSON.stringify(store));
         return;
     }
     if (request.method === "GET" && ((_a = request.url) === null || _a === void 0 ? void 0 : _a.startsWith("/api/users/"))) {
+        if (request.url === reqUrlTwo) {
+            response.end(JSON.stringify(store));
+            return;
+        }
         let x = (0, getUserId_1.getUserId)(request.url, store);
         response.statusCode = x.code;
         response.end(JSON.stringify(x.data));
         return;
     }
-    if (request.url === reqUrl && request.method === "POST") {
+    if (request.url === reqUrlTwo && request.method === "POST") {
+        let newPerson;
         let x;
         request.on("data", (chunk) => {
-            chunk = JSON.parse(chunk.toString());
-            x = (0, post_1.post)(chunk, store);
+            newPerson = JSON.parse(chunk.toString());
+            x = (0, post_1.post)(newPerson, store);
             response.statusCode = x.code;
             response.end(JSON.stringify(x.user));
         });
@@ -65,4 +70,7 @@ http_1.default.createServer((request, response) => {
     }
     response.statusCode = 404;
     response.end("this page wasn't found");
-}).listen(PORT ? PORT : 3000);
+});
+server.listen(PORT || 3000, () => {
+    console.log(`listening for requests on port ${PORT}`);
+});

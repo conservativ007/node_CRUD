@@ -1,23 +1,31 @@
 import http from "http";
+import "dotenv/config";
 
 import { post } from "./functions/post";
 import { getUserId } from "./functions/getUserId";
 import { put } from "./functions/put";
 
-import dotenv from "dotenv";
-const PORT = dotenv.config().parsed?.PORT;
+import { Person } from "./functions/types";
 
-const reqUrl = "/api/users";
-let store: any = [];
+const PORT = process.env.PORT || 3000;
+const reqUrlOne = "/api/users";
+const reqUrlTwo = "/api/users/";
 
-http.createServer((request, response) => {
-  if (request.url === reqUrl && request.method === "GET") {
+let store: Person[] = [];
+
+const server = http.createServer((request, response) => {
+  if (request.url === reqUrlOne && request.method === "GET") {
     response.statusCode = 200;
     response.end(JSON.stringify(store));
     return;
   }
 
   if (request.method === "GET" && request.url?.startsWith("/api/users/")) {
+    if (request.url === reqUrlTwo) {
+      response.end(JSON.stringify(store));
+      return;
+    }
+
     let x: any = getUserId(request.url, store);
 
     response.statusCode = x.code;
@@ -25,13 +33,15 @@ http.createServer((request, response) => {
     return;
   }
 
-  if (request.url === reqUrl && request.method === "POST") {
+  if (request.url === reqUrlTwo && request.method === "POST") {
+
+    let newPerson: Person;
     let x: any;
 
     request.on("data", (chunk) => {
-      chunk = JSON.parse(chunk.toString());
+      newPerson = JSON.parse(chunk.toString());
 
-      x = post(chunk, store);
+      x = post(newPerson, store);
       response.statusCode = x.code;
       response.end(JSON.stringify(x.user));
     });
@@ -53,7 +63,6 @@ http.createServer((request, response) => {
 
       let newStore = put(store, chunk, findUser.data);
       store = newStore;
-
       response.end(JSON.stringify(chunk));
     });
     return;
@@ -68,7 +77,7 @@ http.createServer((request, response) => {
       response.end(JSON.stringify(user.data));
     }
 
-    let filteredStore = store.filter((i: any) => i.id !== user.data.id);
+    let filteredStore = store.filter((i: Person) => i.id !== user.data.id);
     store = filteredStore;
 
     response.statusCode = 204;
@@ -78,4 +87,8 @@ http.createServer((request, response) => {
 
   response.statusCode = 404;
   response.end("this page wasn't found");
-}).listen(PORT ? PORT : 3000);
+});
+
+server.listen(PORT || 3000, () => {
+  console.log(`listening for requests on port ${PORT}`);
+});

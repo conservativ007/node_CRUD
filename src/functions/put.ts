@@ -1,5 +1,8 @@
-export function put(store: [], chunk: {}, findUser: { id: string }) {
-  let newStore: any = store.map((item: { id: string, name: string, age: number, hobbies: [] }) => {
+import { Person } from "./types";
+
+export function put(store: Person[], chunk: {}, findUser: { id: string }) {
+  let newStore: any = store.map((item: Person) => {
+
     if (item.id === findUser.id) {
       console.log("map: ", chunk);
       return {
@@ -10,12 +13,5 @@ export function put(store: [], chunk: {}, findUser: { id: string }) {
 
     return item;
   });
-
   return newStore;
-
-  console.log("newStore :", newStore);
-
-  store = newStore;
-
-  console.log("store :", store);
 }
